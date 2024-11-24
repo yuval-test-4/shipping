@@ -1,0 +1,43 @@
+version: "3"
+services:
+  server:
+    build:
+      context: ./src
+    ports:
+      - 5202:8080
+    environment:
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DbContext: Host=db:5432;Username=admin;Password=admin;Database=postgres
+    restart: on-failure
+    profiles:
+      - complete
+  migrate:
+    build:
+      context: ./src
+    entrypoint: sh
+    command: -c './DbMigrationsBundle --connection "$${MIGRATION_CONNECTION}"'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MIGRATION_CONNECTION: Host=db:5432;Username=admin;Password=admin;Database=postgres
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+      timeout: 5s
+      interval: 10s
+      retries: 10
+      start_period: 10s
+volumes:
+  postgres: ~
