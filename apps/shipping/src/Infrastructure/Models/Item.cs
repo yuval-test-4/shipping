@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shipping.Infrastructure.Models;
 
-[Table("PackageModels")]
-public class PackageModelDbModel
+[Table("Items")]
+public class ItemDbModel
 {
     [Required()]
     public DateTime CreatedAt { get; set; }
@@ -18,14 +18,17 @@ public class PackageModelDbModel
     [Required()]
     public string Id { get; set; }
 
-    public List<ShipmentDbModel>? Shipments { get; set; } = new List<ShipmentDbModel>();
-
     [StringLength(1000)]
-    public string? TrackingNumber { get; set; }
+    public string? Name { get; set; }
+
+    [Range(-999999999, 999999999)]
+    public int? Quantity { get; set; }
+
+    public string? ShipmentId { get; set; }
+
+    [ForeignKey(nameof(ShipmentId))]
+    public ShipmentDbModel? Shipment { get; set; } = null;
 
     [Required()]
     public DateTime UpdatedAt { get; set; }
-
-    [Range(-999999999, 999999999)]
-    public double? Weight { get; set; }
 }

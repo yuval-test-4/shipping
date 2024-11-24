@@ -13,7 +13,7 @@ public static class ShipmentsExtensions
             CreatedAt = model.CreatedAt,
             DepartureTime = model.DepartureTime,
             Id = model.Id,
-            PackageField = model.PackageFieldId,
+            Items = model.Items?.Select(x => x.Id).ToList(),
             UpdatedAt = model.UpdatedAt,
         };
     }
@@ -33,10 +33,6 @@ public static class ShipmentsExtensions
         if (updateDto.CreatedAt != null)
         {
             shipment.CreatedAt = updateDto.CreatedAt.Value;
-        }
-        if (updateDto.PackageField != null)
-        {
-            shipment.PackageFieldId = updateDto.PackageField;
         }
         if (updateDto.UpdatedAt != null)
         {

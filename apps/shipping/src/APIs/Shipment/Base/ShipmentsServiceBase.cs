@@ -35,11 +35,11 @@ public abstract class ShipmentsServiceBase : IShipmentsService
         {
             shipment.Id = createDto.Id;
         }
-        if (createDto.PackageField != null)
+        if (createDto.Items != null)
         {
-            shipment.PackageField = await _context
-                .PackageModels.Where(packageModel => createDto.PackageField.Id == packageModel.Id)
-                .FirstOrDefaultAsync();
+            shipment.Items = await _context
+                .Items.Where(item => createDto.Items.Select(t => t.Id).Contains(item.Id))
+                .ToListAsync();
         }
 
         _context.Shipments.Add(shipment);
@@ -76,7 +76,7 @@ public abstract class ShipmentsServiceBase : IShipmentsService
     public async Task<List<Shipment>> Shipments(ShipmentFindManyArgs findManyArgs)
     {
         var shipments = await _context
-            .Shipments.Include(x => x.PackageField)
+            .Shipments.Include(x => x.Items)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
@@ -122,11 +122,11 @@ public abstract class ShipmentsServiceBase : IShipmentsService
     {
         var shipment = updateDto.ToModel(uniqueId);
 
-        if (updateDto.PackageField != null)
+        if (updateDto.Items != null)
         {
-            shipment.PackageField = await _context
-                .PackageModels.Where(packageModel => updateDto.PackageField == packageModel.Id)
-                .FirstOrDefaultAsync();
+            shipment.Items = await _context
+                .Items.Where(item => updateDto.Items.Select(t => t).Contains(item.Id))
+                .ToListAsync();
         }
 
         _context.Entry(shipment).State = EntityState.Modified;
@@ -149,18 +149,111 @@ public abstract class ShipmentsServiceBase : IShipmentsService
     }
 
     /// <summary>
-    /// Get a Package record for Shipment
+    /// Connect multiple Items records to Shipment
     /// </summary>
-    public async Task<PackageModel> GetPackageField(ShipmentWhereUniqueInput uniqueId)
+    public async Task ConnectItems(
+        ShipmentWhereUniqueInput uniqueId,
+        ItemWhereUniqueInput[] childrenIds
+    )
+    {
+        var parent = await _context
+            .Shipments.Include(x => x.Items)
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
+        if (parent == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var children = await _context
+            .Items.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
+            .ToListAsync();
+        if (children.Count == 0)
+        {
+            throw new NotFoundException();
+        }
+
+        var childrenToConnect = children.Except(parent.Items);
+
+        foreach (var child in childrenToConnect)
+        {
+            parent.Items.Add(child);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Disconnect multiple Items records from Shipment
+    /// </summary>
+    public async Task DisconnectItems(
+        ShipmentWhereUniqueInput uniqueId,
+        ItemWhereUniqueInput[] childrenIds
+    )
+    {
+        var parent = await _context
+            .Shipments.Include(x => x.Items)
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
+        if (parent == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var children = await _context
+            .Items.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
+            .ToListAsync();
+
+        foreach (var child in children)
+        {
+            parent.Items?.Remove(child);
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Find multiple Items records for Shipment
+    /// </summary>
+    public async Task<List<Item>> FindItems(
+        ShipmentWhereUniqueInput uniqueId,
+        ItemFindManyArgs shipmentFindManyArgs
+    )
+    {
+        var items = await _context
+            .Items.Where(m => m.ShipmentId == uniqueId.Id)
+            .ApplyWhere(shipmentFindManyArgs.Where)
+            .ApplySkip(shipmentFindManyArgs.Skip)
+            .ApplyTake(shipmentFindManyArgs.Take)
+            .ApplyOrderBy(shipmentFindManyArgs.SortBy)
+            .ToListAsync();
+
+        return items.Select(x => x.ToDto()).ToList();
+    }
+
+    /// <summary>
+    /// Update multiple Items records for Shipment
+    /// </summary>
+    public async Task UpdateItems(
+        ShipmentWhereUniqueInput uniqueId,
+        ItemWhereUniqueInput[] childrenIds
+    )
     {
         var shipment = await _context
-            .Shipments.Where(shipment => shipment.Id == uniqueId.Id)
-            .Include(shipment => shipment.PackageField)
-            .FirstOrDefaultAsync();
+            .Shipments.Include(t => t.Items)
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (shipment == null)
         {
             throw new NotFoundException();
         }
-        return shipment.PackageField.ToDto();
+
+        var children = await _context
+            .Items.Where(a => childrenIds.Select(x => x.Id).Contains(a.Id))
+            .ToListAsync();
+
+        if (children.Count == 0)
+        {
+            throw new NotFoundException();
+        }
+
+        shipment.Items = children;
+        await _context.SaveChangesAsync();
     }
 }

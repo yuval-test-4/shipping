@@ -5,4 +5,4 @@ using Shipping.Infrastructure.Models;
 namespace Shipping.APIs.Dtos;
 
 [BindProperties(SupportsGet = true)]
-public class PackageModelFindManyArgs : FindManyInput<PackageModel, PackageModelWhereInput> { }
+public class ItemFindManyArgs : FindManyInput<Item, ItemWhereInput> { }

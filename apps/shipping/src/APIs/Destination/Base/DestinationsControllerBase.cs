@@ -116,18 +116,18 @@ public abstract class DestinationsControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Connect multiple Packages records to Destination
+    /// Connect multiple Items records to Destination
     /// </summary>
-    [HttpPost("{Id}/packages")]
+    [HttpPost("{Id}/items")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> ConnectPackages(
+    public async Task<ActionResult> ConnectItems(
         [FromRoute()] DestinationWhereUniqueInput uniqueId,
-        [FromQuery()] PackageModelWhereUniqueInput[] packageModelsId
+        [FromQuery()] ItemWhereUniqueInput[] itemsId
     )
     {
         try
         {
-            await _service.ConnectPackages(uniqueId, packageModelsId);
+            await _service.ConnectItems(uniqueId, itemsId);
         }
         catch (NotFoundException)
         {
@@ -138,18 +138,18 @@ public abstract class DestinationsControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Disconnect multiple Packages records from Destination
+    /// Disconnect multiple Items records from Destination
     /// </summary>
-    [HttpDelete("{Id}/packages")]
+    [HttpDelete("{Id}/items")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> DisconnectPackages(
+    public async Task<ActionResult> DisconnectItems(
         [FromRoute()] DestinationWhereUniqueInput uniqueId,
-        [FromBody()] PackageModelWhereUniqueInput[] packageModelsId
+        [FromBody()] ItemWhereUniqueInput[] itemsId
     )
     {
         try
         {
-            await _service.DisconnectPackages(uniqueId, packageModelsId);
+            await _service.DisconnectItems(uniqueId, itemsId);
         }
         catch (NotFoundException)
         {
@@ -160,18 +160,18 @@ public abstract class DestinationsControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Find multiple Packages records for Destination
+    /// Find multiple Items records for Destination
     /// </summary>
-    [HttpGet("{Id}/packages")]
+    [HttpGet("{Id}/items")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult<List<PackageModel>>> FindPackages(
+    public async Task<ActionResult<List<Item>>> FindItems(
         [FromRoute()] DestinationWhereUniqueInput uniqueId,
-        [FromQuery()] PackageModelFindManyArgs filter
+        [FromQuery()] ItemFindManyArgs filter
     )
     {
         try
         {
-            return Ok(await _service.FindPackages(uniqueId, filter));
+            return Ok(await _service.FindItems(uniqueId, filter));
         }
         catch (NotFoundException)
         {
@@ -180,18 +180,18 @@ public abstract class DestinationsControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Update multiple Packages records for Destination
+    /// Update multiple Items records for Destination
     /// </summary>
-    [HttpPatch("{Id}/packages")]
+    [HttpPatch("{Id}/items")]
     [Authorize(Roles = "user")]
-    public async Task<ActionResult> UpdatePackages(
+    public async Task<ActionResult> UpdateItems(
         [FromRoute()] DestinationWhereUniqueInput uniqueId,
-        [FromBody()] PackageModelWhereUniqueInput[] packageModelsId
+        [FromBody()] ItemWhereUniqueInput[] itemsId
     )
     {
         try
         {
-            await _service.UpdatePackages(uniqueId, packageModelsId);
+            await _service.UpdateItems(uniqueId, itemsId);
         }
         catch (NotFoundException)
         {

@@ -10,7 +10,7 @@ public class ShipmentCreateInput
 
     public string? Id { get; set; }
 
-    public PackageModel? PackageField { get; set; }
+    public List<Item>? Items { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 }

@@ -36,7 +36,25 @@ public interface IShipmentsService
     public Task UpdateShipment(ShipmentWhereUniqueInput uniqueId, ShipmentUpdateInput updateDto);
 
     /// <summary>
-    /// Get a Package record for Shipment
+    /// Connect multiple Items records to Shipment
     /// </summary>
-    public Task<PackageModel> GetPackageField(ShipmentWhereUniqueInput uniqueId);
+    public Task ConnectItems(ShipmentWhereUniqueInput uniqueId, ItemWhereUniqueInput[] itemsId);
+
+    /// <summary>
+    /// Disconnect multiple Items records from Shipment
+    /// </summary>
+    public Task DisconnectItems(ShipmentWhereUniqueInput uniqueId, ItemWhereUniqueInput[] itemsId);
+
+    /// <summary>
+    /// Find multiple Items records for Shipment
+    /// </summary>
+    public Task<List<Item>> FindItems(
+        ShipmentWhereUniqueInput uniqueId,
+        ItemFindManyArgs ItemFindManyArgs
+    );
+
+    /// <summary>
+    /// Update multiple Items records for Shipment
+    /// </summary>
+    public Task UpdateItems(ShipmentWhereUniqueInput uniqueId, ItemWhereUniqueInput[] itemsId);
 }

@@ -22,7 +22,7 @@ public class DestinationDbModel
     [Required()]
     public string Id { get; set; }
 
-    public List<PackageModelDbModel>? Packages { get; set; } = new List<PackageModelDbModel>();
+    public List<ItemDbModel>? Items { get; set; } = new List<ItemDbModel>();
 
     [Required()]
     public DateTime UpdatedAt { get; set; }
