@@ -14,7 +14,7 @@ public static class DestinationsExtensions
             Country = model.Country,
             CreatedAt = model.CreatedAt,
             Id = model.Id,
-            Packages = model.Packages?.Select(x => x.Id).ToList(),
+            Items = model.Items?.Select(x => x.Id).ToList(),
             UpdatedAt = model.UpdatedAt,
         };
     }

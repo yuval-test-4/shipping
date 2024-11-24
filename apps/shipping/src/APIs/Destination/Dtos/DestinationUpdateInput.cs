@@ -12,7 +12,7 @@ public class DestinationUpdateInput
 
     public string? Id { get; set; }
 
-    public List<string>? Packages { get; set; }
+    public List<string>? Items { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 }

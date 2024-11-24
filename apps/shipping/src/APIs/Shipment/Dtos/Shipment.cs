@@ -10,7 +10,7 @@ public class Shipment
 
     public string Id { get; set; }
 
-    public string? PackageField { get; set; }
+    public List<string>? Items { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 }

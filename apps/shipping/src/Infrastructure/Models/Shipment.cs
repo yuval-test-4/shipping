@@ -17,10 +17,7 @@ public class ShipmentDbModel
     [Required()]
     public string Id { get; set; }
 
-    public string? PackageFieldId { get; set; }
-
-    [ForeignKey(nameof(PackageFieldId))]
-    public PackageModelDbModel? PackageField { get; set; } = null;
+    public List<ItemDbModel>? Items { get; set; } = new List<ItemDbModel>();
 
     [Required()]
     public DateTime UpdatedAt { get; set; }

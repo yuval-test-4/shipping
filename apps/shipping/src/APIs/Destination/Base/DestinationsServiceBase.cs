@@ -36,12 +36,10 @@ public abstract class DestinationsServiceBase : IDestinationsService
         {
             destination.Id = createDto.Id;
         }
-        if (createDto.Packages != null)
+        if (createDto.Items != null)
         {
-            destination.Packages = await _context
-                .PackageModels.Where(packageModel =>
-                    createDto.Packages.Select(t => t.Id).Contains(packageModel.Id)
-                )
+            destination.Items = await _context
+                .Items.Where(item => createDto.Items.Select(t => t.Id).Contains(item.Id))
                 .ToListAsync();
         }
 
@@ -79,7 +77,7 @@ public abstract class DestinationsServiceBase : IDestinationsService
     public async Task<List<Destination>> Destinations(DestinationFindManyArgs findManyArgs)
     {
         var destinations = await _context
-            .Destinations.Include(x => x.Packages)
+            .Destinations.Include(x => x.Items)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
@@ -125,12 +123,10 @@ public abstract class DestinationsServiceBase : IDestinationsService
     {
         var destination = updateDto.ToModel(uniqueId);
 
-        if (updateDto.Packages != null)
+        if (updateDto.Items != null)
         {
-            destination.Packages = await _context
-                .PackageModels.Where(packageModel =>
-                    updateDto.Packages.Select(t => t).Contains(packageModel.Id)
-                )
+            destination.Items = await _context
+                .Items.Where(item => updateDto.Items.Select(t => t).Contains(item.Id))
                 .ToListAsync();
         }
 
@@ -154,15 +150,15 @@ public abstract class DestinationsServiceBase : IDestinationsService
     }
 
     /// <summary>
-    /// Connect multiple Packages records to Destination
+    /// Connect multiple Items records to Destination
     /// </summary>
-    public async Task ConnectPackages(
+    public async Task ConnectItems(
         DestinationWhereUniqueInput uniqueId,
-        PackageModelWhereUniqueInput[] childrenIds
+        ItemWhereUniqueInput[] childrenIds
     )
     {
         var parent = await _context
-            .Destinations.Include(x => x.Packages)
+            .Destinations.Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (parent == null)
         {
@@ -170,33 +166,33 @@ public abstract class DestinationsServiceBase : IDestinationsService
         }
 
         var children = await _context
-            .PackageModels.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
+            .Items.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
             .ToListAsync();
         if (children.Count == 0)
         {
             throw new NotFoundException();
         }
 
-        var childrenToConnect = children.Except(parent.Packages);
+        var childrenToConnect = children.Except(parent.Items);
 
         foreach (var child in childrenToConnect)
         {
-            parent.Packages.Add(child);
+            parent.Items.Add(child);
         }
 
         await _context.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Disconnect multiple Packages records from Destination
+    /// Disconnect multiple Items records from Destination
     /// </summary>
-    public async Task DisconnectPackages(
+    public async Task DisconnectItems(
         DestinationWhereUniqueInput uniqueId,
-        PackageModelWhereUniqueInput[] childrenIds
+        ItemWhereUniqueInput[] childrenIds
     )
     {
         var parent = await _context
-            .Destinations.Include(x => x.Packages)
+            .Destinations.Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (parent == null)
         {
@@ -204,45 +200,45 @@ public abstract class DestinationsServiceBase : IDestinationsService
         }
 
         var children = await _context
-            .Packages.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
+            .Items.Where(t => childrenIds.Select(x => x.Id).Contains(t.Id))
             .ToListAsync();
 
         foreach (var child in children)
         {
-            parent.Packages?.Remove(child);
+            parent.Items?.Remove(child);
         }
         await _context.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Find multiple Packages records for Destination
+    /// Find multiple Items records for Destination
     /// </summary>
-    public async Task<List<PackageModel>> FindPackages(
+    public async Task<List<Item>> FindItems(
         DestinationWhereUniqueInput uniqueId,
-        PackageModelFindManyArgs destinationFindManyArgs
+        ItemFindManyArgs destinationFindManyArgs
     )
     {
-        var packageModels = await _context
-            .PackageModels.Where(m => m.DestinationId == uniqueId.Id)
+        var items = await _context
+            .Items.Where(m => m.DestinationId == uniqueId.Id)
             .ApplyWhere(destinationFindManyArgs.Where)
             .ApplySkip(destinationFindManyArgs.Skip)
             .ApplyTake(destinationFindManyArgs.Take)
             .ApplyOrderBy(destinationFindManyArgs.SortBy)
             .ToListAsync();
 
-        return packageModels.Select(x => x.ToDto()).ToList();
+        return items.Select(x => x.ToDto()).ToList();
     }
 
     /// <summary>
-    /// Update multiple Packages records for Destination
+    /// Update multiple Items records for Destination
     /// </summary>
-    public async Task UpdatePackages(
+    public async Task UpdateItems(
         DestinationWhereUniqueInput uniqueId,
-        PackageModelWhereUniqueInput[] childrenIds
+        ItemWhereUniqueInput[] childrenIds
     )
     {
         var destination = await _context
-            .Destinations.Include(t => t.Packages)
+            .Destinations.Include(t => t.Items)
             .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
         if (destination == null)
         {
@@ -250,7 +246,7 @@ public abstract class DestinationsServiceBase : IDestinationsService
         }
 
         var children = await _context
-            .PackageModels.Where(a => childrenIds.Select(x => x.Id).Contains(a.Id))
+            .Items.Where(a => childrenIds.Select(x => x.Id).Contains(a.Id))
             .ToListAsync();
 
         if (children.Count == 0)
@@ -258,7 +254,7 @@ public abstract class DestinationsServiceBase : IDestinationsService
             throw new NotFoundException();
         }
 
-        destination.Packages = children;
+        destination.Items = children;
         await _context.SaveChangesAsync();
     }
 }

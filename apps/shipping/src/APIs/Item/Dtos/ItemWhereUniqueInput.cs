@@ -1,6 +1,6 @@
 namespace Shipping.APIs.Dtos;
 
-public class PackageModelWhereUniqueInput
+public class ItemWhereUniqueInput
 {
     public string Id { get; set; }
 }

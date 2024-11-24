@@ -12,7 +12,7 @@ public class DestinationWhereInput
 
     public string? Id { get; set; }
 
-    public List<string>? Packages { get; set; }
+    public List<string>? Items { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 }

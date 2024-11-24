@@ -114,14 +114,88 @@ public abstract class ShipmentsControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Get a Package record for Shipment
+    /// Connect multiple Items records to Shipment
     /// </summary>
-    [HttpGet("{Id}/packageField")]
-    public async Task<ActionResult<List<PackageModel>>> GetPackageField(
-        [FromRoute()] ShipmentWhereUniqueInput uniqueId
+    [HttpPost("{Id}/items")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> ConnectItems(
+        [FromRoute()] ShipmentWhereUniqueInput uniqueId,
+        [FromQuery()] ItemWhereUniqueInput[] itemsId
     )
     {
-        var packageModel = await _service.GetPackageField(uniqueId);
-        return Ok(packageModel);
+        try
+        {
+            await _service.ConnectItems(uniqueId, itemsId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Disconnect multiple Items records from Shipment
+    /// </summary>
+    [HttpDelete("{Id}/items")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> DisconnectItems(
+        [FromRoute()] ShipmentWhereUniqueInput uniqueId,
+        [FromBody()] ItemWhereUniqueInput[] itemsId
+    )
+    {
+        try
+        {
+            await _service.DisconnectItems(uniqueId, itemsId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Find multiple Items records for Shipment
+    /// </summary>
+    [HttpGet("{Id}/items")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult<List<Item>>> FindItems(
+        [FromRoute()] ShipmentWhereUniqueInput uniqueId,
+        [FromQuery()] ItemFindManyArgs filter
+    )
+    {
+        try
+        {
+            return Ok(await _service.FindItems(uniqueId, filter));
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// Update multiple Items records for Shipment
+    /// </summary>
+    [HttpPatch("{Id}/items")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> UpdateItems(
+        [FromRoute()] ShipmentWhereUniqueInput uniqueId,
+        [FromBody()] ItemWhereUniqueInput[] itemsId
+    )
+    {
+        try
+        {
+            await _service.UpdateItems(uniqueId, itemsId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

@@ -39,34 +39,28 @@ public interface IDestinationsService
     );
 
     /// <summary>
-    /// Connect multiple Packages records to Destination
+    /// Connect multiple Items records to Destination
     /// </summary>
-    public Task ConnectPackages(
+    public Task ConnectItems(DestinationWhereUniqueInput uniqueId, ItemWhereUniqueInput[] itemsId);
+
+    /// <summary>
+    /// Disconnect multiple Items records from Destination
+    /// </summary>
+    public Task DisconnectItems(
         DestinationWhereUniqueInput uniqueId,
-        PackageModelWhereUniqueInput[] packageModelsId
+        ItemWhereUniqueInput[] itemsId
     );
 
     /// <summary>
-    /// Disconnect multiple Packages records from Destination
+    /// Find multiple Items records for Destination
     /// </summary>
-    public Task DisconnectPackages(
+    public Task<List<Item>> FindItems(
         DestinationWhereUniqueInput uniqueId,
-        PackageModelWhereUniqueInput[] packageModelsId
+        ItemFindManyArgs ItemFindManyArgs
     );
 
     /// <summary>
-    /// Find multiple Packages records for Destination
+    /// Update multiple Items records for Destination
     /// </summary>
-    public Task<List<PackageModel>> FindPackages(
-        DestinationWhereUniqueInput uniqueId,
-        PackageModelFindManyArgs PackageModelFindManyArgs
-    );
-
-    /// <summary>
-    /// Update multiple Packages records for Destination
-    /// </summary>
-    public Task UpdatePackages(
-        DestinationWhereUniqueInput uniqueId,
-        PackageModelWhereUniqueInput[] packageModelsId
-    );
+    public Task UpdateItems(DestinationWhereUniqueInput uniqueId, ItemWhereUniqueInput[] itemsId);
 }

@@ -10,9 +10,9 @@ public class ShippingDbContext : IdentityDbContext<IdentityUser>
     public ShippingDbContext(DbContextOptions<ShippingDbContext> options)
         : base(options) { }
 
-    public DbSet<PackageModelDbModel> PackageModels { get; set; }
-
     public DbSet<ShipmentDbModel> Shipments { get; set; }
 
     public DbSet<DestinationDbModel> Destinations { get; set; }
+
+    public DbSet<ItemDbModel> Items { get; set; }
 }
