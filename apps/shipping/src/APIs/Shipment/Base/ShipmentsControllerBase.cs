@@ -31,25 +31,6 @@ public abstract class ShipmentsControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Delete one Shipment
-    /// </summary>
-    [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task<ActionResult> DeleteShipment([FromRoute()] ShipmentWhereUniqueInput uniqueId)
-    {
-        try
-        {
-            await _service.DeleteShipment(uniqueId);
-        }
-        catch (NotFoundException)
-        {
-            return NotFound();
-        }
-
-        return NoContent();
-    }
-
-    /// <summary>
     /// Find many Shipments
     /// </summary>
     [HttpGet()]
