@@ -1,0 +1,68 @@
+{
+    "family": "shipping",
+    "containerDefinitions": [
+        {
+            "name": "shipping",
+            "image": "369232204790.dkr.ecr.us-east-1.amazonaws.com/shipping:latest",
+            "essential": true,
+            "portMappings": [
+                {
+                    "name": "shipping-8080-tcp",
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "ASPNETCORE_HTTP_PORTS",
+                    "value": "8080"
+                },
+                {
+                    "name": "ASPNETCORE_ENVIRONMENT",
+                    "value": "Development"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "BCRYPT_SALT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:369232204790:secret:shipping_secrets:BCRYPT_SALT::"
+                },
+                {
+                    "name": "JWT_EXPIRATION",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:369232204790:secret:shipping_secrets:JWT_EXPIRATION::"
+                },
+                {
+                    "name": "JWT_SECRET_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:369232204790:secret:shipping_secrets:JWT_SECRET_KEY::"
+                },
+                {
+                    "name": "DB_URL",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:369232204790:secret:shipping_secrets:DB_URL::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/shipping",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "mountPoints": [],
+            "volumesFrom": []
+        }
+    ],
+    "executionRoleArn": "arn:aws:iam::369232204790:role/custom_ecs_execution_shipping",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
