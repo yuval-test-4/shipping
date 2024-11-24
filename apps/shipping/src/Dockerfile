@@ -24,5 +24,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
 COPY --from=build-env /App/out .
 COPY --from=build-env /App/DbMigrationsBundle ./DbMigrationsBundle
+COPY ./Migrations ./Migrations 
 
 ENTRYPOINT ["dotnet", "shipping.dll"]
